@@ -3,23 +3,26 @@
 import chat_gui as gui
 import chat_comunication_client as com
 import thread
+import json
 
-uname = ""
+with open('config.json') as d:
+	config = json.load(d)
+uname = config["nick"]
 outMessage = ""
-ip = "127.0.0.1"
+u_ip = config["ip"]
+u_port = int(config["port"])
 
 def incomingMessage(m):
-	gui.insertChatMessage("",m)
+	gui.insertChatMessage("friend",m)
 def outcomingMessage():
 	gui.insertChatMessage(uname, gui.outMessage.get())
-	com.sendMessage(gui.ip.get(),int(gui.port.get()),gui.outMessage.get())
+	com.sendMessage(gui.s_ip.get(),int(gui.s_port.get()),gui.outMessage.get())
 	
 try:
-	port = int(raw_input("specify a port for listening"))
-	thread.start_new_thread(com.receiveMessage,(port,incomingMessage, ))
+	thread.start_new_thread(com.receiveMessage,(u_ip,u_port,incomingMessage, ))
 except:
 	print"cant listen to conversation"	
 	
-gui.init("polly", outcomingMessage)
+gui.init("me", u_ip, u_port,outcomingMessage)
 
 
